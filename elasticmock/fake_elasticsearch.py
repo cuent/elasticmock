@@ -24,9 +24,11 @@ class QueryType:
     FILTER = 'FILTER'
     MATCH = 'MATCH'
     MATCH_ALL = 'MATCH_ALL'
+    MULTI_MATCH = 'MULTI_MATCH'
     TERM = 'TERM'
     TERMS = 'TERMS'
     MUST = 'MUST'
+    QUERY = 'QUERY'
 
     @staticmethod
     def get_query_type(type_str):
@@ -37,13 +39,17 @@ class QueryType:
         elif type_str == 'match':
             return QueryType.MATCH
         elif type_str == 'match_all':
-            return QueryType.MATCH_ALL        
+            return QueryType.MATCH_ALL
+        elif type_str == 'multi_match':
+            return QueryType.MULTI_MATCH
         elif type_str == 'term':
             return QueryType.TERM
         elif type_str == 'terms':
             return QueryType.TERMS
         elif type_str == 'must':
             return QueryType.MUST
+        elif type_str == 'query':
+            return QueryType.QUERY
         else:
             raise NotImplementedError(f'type {type_str} is not implemented for QueryType')
 
@@ -69,6 +75,14 @@ class FakeQueryCondition:
         elif self.type == QueryType.BOOL:
             return self._evaluate_for_compound_query_type(document)
         elif self.type == QueryType.FILTER:
+            return self._evaluate_for_compound_query_type(document)
+        elif self.type == QueryType.MUST:
+            return self._evaluate_for_compound_query_type(document)
+        elif self.type == QueryType.MATCH_ALL:
+            return self._evaluate_for_match_query_type(document)
+        elif self.type == QueryType.MULTI_MATCH:
+            return self._evaluate_for_match_query_type(document)
+        elif self.type == QueryType.QUERY:
             return self._evaluate_for_compound_query_type(document)
         else:
             raise NotImplementedError('Fake query evaluation not implemented for query type: %s' % self.type)
